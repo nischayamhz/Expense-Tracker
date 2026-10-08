@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Expense - Expense Tracker</title>
+</head>
+<body>
+
+    <h1>Add Expense</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Save Expense</button>
+    </form>
+
+    <p>
+        <a href="{% url 'expense_list' %}">Back to My Expenses</a>
+    </p>
+
+</body>
+</html>

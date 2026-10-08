@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Expenses - Expense Tracker</title>
+</head>
+<body>
+
+    <h1>My Expenses</h1>
+
+    <p>
+        Welcome, {{ user.username }}!
+    </p>
+
+    <p>
+        <a href="{% url 'dashboard' %}">Dashboard</a> |
+        <a href="{% url 'add_expense' %}">Add Expense</a>
+    </p>
+
+    {% if expenses %}
+
+        <table border="1" cellpadding="8">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.category.name }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>
+                        <a href="{% url 'edit_expense' expense.pk %}">
+                            Edit
+                        </a>
+
+                        <a href="{% url 'delete_expense' expense.pk %}">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+
+        <p>You don't have any expenses yet.</p>
+
+        <a href="{% url 'add_expense' %}">
+            Add your first expense
+        </a>
+
+    {% endif %}
+
+</body>
+</html>
