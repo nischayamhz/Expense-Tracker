@@ -1,64 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Expenses - Expense Tracker</title>
-</head>
-<body>
 
+{% extends 'base.html' %}
+
+{% block title %}My Expenses | Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h1>My Expenses</h1>
+    <a href="{% url 'add_expense' %}" class="btn btn-primary">
+        + Add Expense
+    </a>
+</div>
 
-    <p>
-        Welcome, {{ user.username }}!
-    </p>
+<section class="content-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Search description</label>
+            <input class="form-control" type="text" name="search"
+                   value="{{ search }}" placeholder="Search expenses">
+        </div>
 
-    <p>
-        <a href="{% url 'dashboard' %}">Dashboard</a> |
-        <a href="{% url 'add_expense' %}">Add Expense</a>
-    </p>
+        <div class="col-md-2">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category">
+                <option value="">All categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}"
+                        {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-    {% if expenses %}
+        <div class="col-md-2">
+            <label class="form-label">From date</label>
+            <input class="form-control" type="date" name="start_date"
+                   value="{{ start_date }}">
+        </div>
 
-        <table border="1" cellpadding="8">
+        <div class="col-md-2">
+            <label class="form-label">To date</label>
+            <input class="form-control" type="date" name="end_date"
+                   value="{{ end_date }}">
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end gap-2">
+            <button class="btn btn-primary" type="submit">Filter</button>
+            <a class="btn btn-outline-secondary" href="{% url 'expense_list' %}">
+                Reset
+            </a>
+        </div>
+    </form>
+</section>
+
+<section class="content-card">
+    <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+        <h4>Transactions</h4>
+        <strong>Filtered total: {{ filtered_total|floatformat:2 }}</strong>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
             <thead>
                 <tr>
                     <th>Date</th>
                     <th>Category</th>
-                    <th>Amount</th>
                     <th>Description</th>
+                    <th>Amount</th>
                     <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
                 {% for expense in expenses %}
                 <tr>
                     <td>{{ expense.date }}</td>
                     <td>{{ expense.category.name }}</td>
-                    <td>{{ expense.amount }}</td>
                     <td>{{ expense.description }}</td>
-                    <td>
-                        <a href="{% url 'edit_expense' expense.pk %}">
-                            Edit
-                        </a>
-
-                        <a href="{% url 'delete_expense' expense.pk %}">
-                            Delete
-                        </a>
+                    <td>{{ expense.amount|floatformat:2 }}</td>
+                    <td class="text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{% url 'edit_expense' expense.pk %}">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger"
+                           href="{% url 'delete_expense' expense.pk %}">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        No matching expenses found.
+                        <a href="{% url 'add_expense' %}">Add an expense</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-    {% else %}
-
-        <p>You don't have any expenses yet.</p>
-
-        <a href="{% url 'add_expense' %}">
-            Add your first expense
-        </a>
-
-    {% endif %}
-
-</body>
-</html>
+    </div>
+</section>
+{% endblock %}

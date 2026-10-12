@@ -1,24 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login - Expense Tracker</title>
-</head>
-<body>
 
-    <h1>Login</h1>
+{% extends 'base.html' %}
+
+{% block title %}Login | Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="form-card mx-auto">
+    <h2 class="mb-4">Welcome Back</h2>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            Username or password is incorrect.
+        </div>
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
-
-        <button type="submit">Login</button>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn btn-primary w-100" type="submit">
+            Login
+        </button>
     </form>
 
-    <p>
+    <p class="mt-3 text-center">
         Don't have an account?
-        <a href="{% url 'register' %}">Create Account</a>
+        <a href="{% url 'register' %}">Register here</a>
     </p>
-
-</body>
-</html>
+</div>
+{% endblock %}

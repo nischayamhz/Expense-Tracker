@@ -1,25 +1,121 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard - Expense Tracker</title>
-</head>
-<body>
 
-    <h1>Expense Tracker</h1>
+{% extends 'base.html' %}
 
-    <h2>Welcome, {{ user.username }}!</h2>
+{% block title %}Dashboard | Expense Tracker{% endblock %}
 
-    <p>You are successfully logged in.</p>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="text-muted mb-0">Welcome, {{ user.username }}.</p>
+    </div>
+    <a href="{% url 'add_expense' %}" class="btn btn-primary">
+        + Add Expense
+    </a>
+</div>
 
-    <h3>Dashboard</h3>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="summary-card">
+            <p>Total Expenses</p>
+            <h3>{{ total_expenses|floatformat:2 }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card">
+            <p>Expenses This Month</p>
+            <h3>{{ monthly_expenses|floatformat:2 }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card">
+            <p>Number of Expenses</p>
+            <h3>{{ expense_count }}</h3>
+        </div>
+    </div>
+</div>
 
-    <p>Total Expenses: Coming soon</p>
-    <p>Monthly Expenses: Coming soon</p>
-    <p>Category-wise Expenses: Coming soon</p>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <section class="content-card">
+            <h4>Spending by Category</h4>
 
-    <p>
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
+            {% if category_totals %}
+                <canvas id="categoryChart"></canvas>
+                <div class="mt-3">
+                    {% for item in category_totals %}
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>{{ item.category__name }}</span>
+                            <strong>{{ item.total|floatformat:2 }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Add expenses to see your category report.</p>
+            {% endif %}
+        </section>
+    </div>
 
-</body>
-</html>
+    <div class="col-lg-6">
+        <section class="content-card">
+            <h4>Recent Expenses</h4>
+
+            {% for expense in recent_expenses %}
+                <div class="d-flex justify-content-between border-bottom py-3">
+                    <div>
+                        <strong>{{ expense.description|truncatechars:35 }}</strong>
+                        <div class="text-muted small">
+                            {{ expense.category.name }} · {{ expense.date }}
+                        </div>
+                    </div>
+                    <strong>{{ expense.amount|floatformat:2 }}</strong>
+                </div>
+            {% empty %}
+                <p class="text-muted">No expenses recorded yet.</p>
+            {% endfor %}
+
+            <a href="{% url 'expense_list' %}" class="btn btn-outline-primary mt-3">
+                View All Expenses
+            </a>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const categoryLabels = [
+    {% for item in category_totals %}
+        "{{ item.category__name|escapejs }}",
+    {% endfor %}
+];
+
+const categoryValues = [
+    {% for item in category_totals %}
+        {{ item.total|default:0 }},
+    {% endfor %}
+];
+
+const chartElement = document.getElementById('categoryChart');
+
+if (chartElement && categoryLabels.length > 0) {
+    new Chart(chartElement, {
+        type: 'doughnut',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Expenses',
+                data: categoryValues
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

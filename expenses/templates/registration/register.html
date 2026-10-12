@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register - Expense Tracker</title>
-</head>
-<body>
 
-    <h1>Create Account</h1>
+{% extends 'base.html' %}
+
+{% block title %}Register | Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="form-card mx-auto">
+    <h2 class="mb-4">Create Your Account</h2>
 
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
-
-        <button type="submit">Register</button>
+        <button class="btn btn-primary w-100" type="submit">
+            Register
+        </button>
     </form>
 
-    <p>
-        Already have an account?
-        <a href="{% url 'login' %}">Login</a>
+    <p class="mt-3 text-center">
+        Already registered?
+        <a href="{% url 'login' %}">Login here</a>
     </p>
-
-</body>
-</html>
+</div>
+{% endblock %}

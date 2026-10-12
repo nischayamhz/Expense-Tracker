@@ -1,23 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Expense - Expense Tracker</title>
-</head>
-<body>
 
-    <h1>Add Expense</h1>
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} | Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="form-card mx-auto">
+    <h2 class="mb-4">{{ page_title }}</h2>
+
+    {% if not form.fields.category.queryset.exists %}
+        <div class="alert alert-warning">
+            You need a category before adding an expense.
+            <a href="{% url 'add_category' %}">Create a category</a>.
+        </div>
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
 
-        <button type="submit">Save Expense</button>
+        <button class="btn btn-primary" type="submit">Save Expense</button>
+        <a class="btn btn-outline-secondary"
+           href="{% url 'expense_list' %}">Cancel</a>
     </form>
-
-    <p>
-        <a href="{% url 'expense_list' %}">Back to My Expenses</a>
-    </p>
-
-</body>
-</html>
+</div>
+{% endblock %}

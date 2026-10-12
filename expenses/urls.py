@@ -1,19 +1,19 @@
+
 from django.urls import path
-from .views import (
-    register,
-    dashboard,
-    expense_list,
-    add_expense,
-    edit_expense,
-    delete_expense,
-)
+
+from . import views
 
 urlpatterns = [
-    path('', dashboard, name='dashboard'),
-    path('register/', register, name='register'),
+    path('', views.dashboard, name='dashboard'),
+    path('register/', views.register, name='register'),
 
-    path('expenses/', expense_list, name='expense_list'),
-    path('expenses/add/', add_expense, name='add_expense'),
-    path('expenses/edit/<int:pk>/', edit_expense, name='edit_expense'),
-    path('expenses/delete/<int:pk>/', delete_expense, name='delete_expense'),
+    path('expenses/', views.expense_list, name='expense_list'),
+    path('expenses/add/', views.add_expense, name='add_expense'),
+    path('expenses/edit/<int:pk>/', views.edit_expense, name='edit_expense'),
+    path('expenses/delete/<int:pk>/', views.delete_expense, name='delete_expense'),
+
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/add/', views.add_category, name='add_category'),
+    path('categories/edit/<int:pk>/', views.edit_category, name='edit_category'),
+    path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
 ]
